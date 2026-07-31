@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Productos API (NestJS)",
-    "description": "Colección actualizada para probar el CRUD de Productos. Incluye cuerpos de ejemplo y validaciones.",
+    "description": "Colección completa para probar el CRUD de Productos sincronizada con las rutas y decoradores Swagger del controlador.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -23,11 +23,11 @@
               "raw": "{\n  \"nombre\": \"Teclado Mecánico RGB\",\n  \"precio\": 129.99,\n  \"stock\": 50\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/productos",
+              "raw": "{{baseUrl}}/productos/create",
               "host": ["{{baseUrl}}"],
-              "path": ["productos"]
+              "path": ["productos", "create"]
             },
-            "description": "Crea un nuevo producto en la base de datos. Requiere nombre (string), precio (number positivo) y stock (number positivo)."
+            "description": "Crea un nuevo producto en la base de datos (201 Created)."
           }
         },
         {
@@ -36,11 +36,11 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/productos",
+              "raw": "{{baseUrl}}/productos/list",
               "host": ["{{baseUrl}}"],
-              "path": ["productos"]
+              "path": ["productos", "list"]
             },
-            "description": "Devuelve la lista completa de productos registrados."
+            "description": "Devuelve la lista completa de productos registrados (200 OK)."
           }
         },
         {
@@ -53,7 +53,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
             },
-            "description": "Busca un producto por su UUID. Si no existe, devuelve 404 NotFound."
+            "description": "Busca un producto por su UUID en la base de datos (200 OK / 400 BadRequest / 404 NotFound)."
           }
         },
         {
@@ -75,7 +75,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
             },
-            "description": "Actualiza parcialmente un producto. Todos los campos son opcionales pero se validan si se envían."
+            "description": "Actualiza parcialmente un producto existente por su UUID."
           }
         },
         {
@@ -88,7 +88,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
             },
-            "description": "Elimina un producto por su UUID. Devuelve el producto eliminado o 404 si no existe."
+            "description": "Elimina un producto por su UUID (200 OK / 400 BadRequest / 404 NotFound)."
           }
         }
       ]

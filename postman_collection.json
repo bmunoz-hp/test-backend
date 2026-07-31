@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Prueba Técnica - Productos API",
-    "description": "Colección para probar el CRUD de Productos en NestJS",
+    "name": "Productos API (NestJS)",
+    "description": "Colección completa para probar el CRUD de Productos sincronizada con las rutas y decoradores Swagger del controlador.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -9,37 +9,42 @@
       "name": "Productos",
       "item": [
         {
-          "name": "1. Crear Producto",
+          "name": "Crear Producto",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Teclado Mecánico\",\n  \"precio\": 150.50,\n  \"stock\": 10\n}"
+              "raw": "{\n  \"nombre\": \"Teclado Mecánico RGB\",\n  \"precio\": 129.99,\n  \"stock\": 50\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/productos",
+              "raw": "{{baseUrl}}/productos/create",
               "host": ["{{baseUrl}}"],
-              "path": ["productos"]
-            }
+              "path": ["productos", "create"]
+            },
+            "description": "Crea un nuevo producto en la base de datos (201 Created)."
           }
         },
         {
-          "name": "2. Obtener Todos",
+          "name": "Obtener Todos los Productos",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/productos",
+              "raw": "{{baseUrl}}/productos/list",
               "host": ["{{baseUrl}}"],
-              "path": ["productos"]
-            }
+              "path": ["productos", "list"]
+            },
+            "description": "Devuelve la lista completa de productos registrados (200 OK)."
           }
         },
         {
-          "name": "3. Obtener Uno por ID",
+          "name": "Obtener Producto por ID",
           "request": {
             "method": "GET",
             "header": [],
@@ -47,29 +52,34 @@
               "raw": "{{baseUrl}}/productos/{{producto_id}}",
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
-            }
+            },
+            "description": "Busca un producto por su UUID en la base de datos (200 OK / 400 BadRequest / 404 NotFound)."
           }
         },
         {
-          "name": "4. Actualizar Producto",
+          "name": "Actualizar Producto",
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"precio\": 120.00\n}"
+              "raw": "{\n  \"precio\": 99.99,\n  \"stock\": 45\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/productos/{{producto_id}}",
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
-            }
+            },
+            "description": "Actualiza parcialmente un producto existente por su UUID."
           }
         },
         {
-          "name": "5. Eliminar Producto",
+          "name": "Eliminar Producto",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -77,7 +87,8 @@
               "raw": "{{baseUrl}}/productos/{{producto_id}}",
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
-            }
+            },
+            "description": "Elimina un producto por su UUID (200 OK / 400 BadRequest / 404 NotFound)."
           }
         }
       ]
@@ -91,7 +102,7 @@
     },
     {
       "key": "producto_id",
-      "value": "pega-aqui-el-uuid-generado",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
       "type": "string"
     }
   ]

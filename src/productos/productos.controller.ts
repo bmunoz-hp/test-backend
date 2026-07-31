@@ -14,16 +14,17 @@ import { ProductResponseDto } from './dto/product-response.dto';
 import { ParseUUIDPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Productos')
 @Controller('productos')
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) {}
 
   @Post('create')
-  @ApiOperation({ summary: 'Crear un producto' })
+  @ApiOperation({ summary: 'Crear un nuevo producto' })
   @ApiResponse({
     status: 201,
     description: 'Producto creado correctamente',
-    type: CreateProductoDto,
+    type: ProductResponseDto,
   })
   @ApiResponse({
     status: 400,
@@ -39,22 +40,19 @@ export class ProductosController {
   @ApiOperation({ summary: 'Obtener todos los productos' })
   @ApiResponse({
     status: 200,
-    description: 'Productos obtenidos corretamente.',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Error interno del servidor.',
+    description: 'Productos obtenidos correctamente.',
+    type: [ProductResponseDto],
   })
   @ApiResponse({
     status: 404,
-    description: 'Productos solicitados no encontrado. ',
+    description: 'No se encontraron productos.',
   })
   findAll() {
     return this.productosService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener un producto por su ID.' })
+  @ApiOperation({ summary: 'Obtener un producto por su ID' })
   @ApiResponse({
     status: 200,
     description: 'Producto obtenido correctamente.',
@@ -62,7 +60,7 @@ export class ProductosController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Error interno del servidor.',
+    description: 'ID inválido (debe ser un UUID válido).',
   })
   @ApiResponse({
     status: 404,
@@ -79,11 +77,15 @@ export class ProductosController {
   @ApiResponse({
     status: 200,
     description: 'Producto actualizado correctamente.',
-    type: UpdateProductoDto,
+    type: ProductResponseDto,
   })
   @ApiResponse({
     status: 400,
-    description: 'Datos inválidos',
+    description: 'Datos de actualización o ID inválidos',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Producto a actualizar no encontrado.',
   })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -97,7 +99,20 @@ export class ProductosController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @ApiOperation({ summary: 'Eliminar un producto por ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Producto eliminado correctamente.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'ID de producto inválido.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Producto a eliminar no encontrado.',
+  })
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.productosService.remove(id);
   }
 }
