@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Productos API (NestJS)",
-    "description": "Colección para probar el CRUD de Productos en NestJS.",
+    "description": "Colección actualizada para probar el CRUD de Productos. Incluye cuerpos de ejemplo y validaciones.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -20,13 +20,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Teclado Mecánico\",\n  \"precio\": 99.99,\n  \"stock\": 10\n}"
+              "raw": "{\n  \"nombre\": \"Teclado Mecánico RGB\",\n  \"precio\": 129.99,\n  \"stock\": 50\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/productos",
               "host": ["{{baseUrl}}"],
               "path": ["productos"]
-            }
+            },
+            "description": "Crea un nuevo producto en la base de datos. Requiere nombre (string), precio (number positivo) y stock (number positivo)."
           }
         },
         {
@@ -38,7 +39,8 @@
               "raw": "{{baseUrl}}/productos",
               "host": ["{{baseUrl}}"],
               "path": ["productos"]
-            }
+            },
+            "description": "Devuelve la lista completa de productos registrados."
           }
         },
         {
@@ -50,7 +52,8 @@
               "raw": "{{baseUrl}}/productos/{{producto_id}}",
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
-            }
+            },
+            "description": "Busca un producto por su UUID. Si no existe, devuelve 404 NotFound."
           }
         },
         {
@@ -65,13 +68,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"precio\": 89.99\n}"
+              "raw": "{\n  \"precio\": 99.99,\n  \"stock\": 45\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/productos/{{producto_id}}",
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
-            }
+            },
+            "description": "Actualiza parcialmente un producto. Todos los campos son opcionales pero se validan si se envían."
           }
         },
         {
@@ -83,7 +87,8 @@
               "raw": "{{baseUrl}}/productos/{{producto_id}}",
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
-            }
+            },
+            "description": "Elimina un producto por su UUID. Devuelve el producto eliminado o 404 si no existe."
           }
         }
       ]
@@ -97,7 +102,7 @@
     },
     {
       "key": "producto_id",
-      "value": "aqui-va-el-id-creado",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
       "type": "string"
     }
   ]

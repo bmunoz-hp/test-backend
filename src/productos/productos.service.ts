@@ -5,6 +5,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Producto } from './entities/producto.entity';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class ProductosService {
@@ -15,19 +16,24 @@ export class ProductosService {
 
   async create(createProductoDto: CreateProductoDto): Promise<Producto> {
     const nuevoProducto = this.productoRepository.create(createProductoDto);
+    if (!nuevoProducto) {
+      throw new NotFoundException('Error al crear producto');
+    }
     return await this.productoRepository.save(nuevoProducto);
   }
 
   async findAll(): Promise<Producto[]> {
+    if (!Producto) {
+      throw new NotFoundException('Productos no encontrados');
+    }
     return await this.productoRepository.find();
   }
 
-  async findOne(id: string): Promise<Producto> {
-    const producto = await this.productoRepository.findOneBy({ id });
-    if (!producto) {
-      throw new NotFoundException(`Producto con id ${id} no encontrado`);
+  async findOne(id: string): Promise<Producto | null> {
+    if (!id) {
+      throw new NotFoundException('El ID del producto no existe.');
     }
-    return producto;
+    return await this.productoRepository.findOne({ where: { id } });
   }
 
   async update(
@@ -36,7 +42,7 @@ export class ProductosService {
   ): Promise<Producto | null> {
     const producto = await this.findOne(id);
     if (!producto) {
-      return null;
+      throw new NotFoundException('Producto no encontrado');
     }
     this.productoRepository.merge(producto, updateProductoDto);
     return await this.productoRepository.save(producto);
