@@ -14,9 +14,16 @@ export class ProductosService {
     private readonly productoRepository: Repository<Producto>,
   ) {}
 
+  /**
+   * Cambiar consultar a BD por QueryBuilder
+   * Validar ID antes de hacer la Query (UUID)
+   * Aplicar Constraints en la entidad Productos
+   * */
+
   async create(createProductoDto: CreateProductoDto): Promise<Producto> {
     const nuevoProducto = this.productoRepository.create(createProductoDto);
     if (!nuevoProducto) {
+      // Mejorar excepciones de respuesta
       throw new NotFoundException('Error al crear producto');
     }
     return await this.productoRepository.save(nuevoProducto);
@@ -26,11 +33,13 @@ export class ProductosService {
     if (!Producto) {
       throw new NotFoundException('Productos no encontrados');
     }
+    // Aplicar filtros de busqueda, paginación y ordenamiento
     return await this.productoRepository.find();
   }
 
   async findOne(id: string): Promise<Producto | null> {
     if (!id) {
+      // Mejorar excepciones de respuesta
       throw new NotFoundException('El ID del producto no existe.');
     }
     return await this.productoRepository.findOne({ where: { id } });
@@ -42,6 +51,7 @@ export class ProductosService {
   ): Promise<Producto | null> {
     const producto = await this.findOne(id);
     if (!producto) {
+      // Mejorar excepciones de respuesta
       throw new NotFoundException('Producto no encontrado');
     }
     this.productoRepository.merge(producto, updateProductoDto);
@@ -51,6 +61,7 @@ export class ProductosService {
   async remove(id: string): Promise<void> {
     const producto = await this.findOne(id);
     if (!producto) {
+      // Mejorar excepciones de respuesta
       throw new NotFoundException(`Producto con id ${id} no encontrado`);
     }
     await this.productoRepository.remove(producto);
