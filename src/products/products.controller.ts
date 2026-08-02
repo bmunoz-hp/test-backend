@@ -7,17 +7,17 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ProductosService } from './productos.service';
-import { CreateProductoDto } from './dto/create-producto.dto';
-import { UpdateProductoDto } from './dto/update-producto.dto';
+import { ProductsService } from './products.service';
+import { CreateProductDto } from './dto/create-producto.dto';
+import { UpdateProductDto } from './dto/update-producto.dto';
 import { ProductResponseDto } from './dto/product-response.dto';
 import { ParseUUIDPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Productos')
 @Controller('productos')
-export class ProductosController {
-  constructor(private readonly productosService: ProductosService) {}
+export class ProductsController {
+  constructor(private readonly productsService: ProductsService) {}
 
   @Post('create')
   @ApiOperation({ summary: 'Crear un nuevo producto' })
@@ -30,10 +30,12 @@ export class ProductosController {
     status: 400,
     description: 'Campos faltantes o datos inválidos',
   })
+
+  // Corregido para recibir el DTO de creación de producto y devolver un objeto con mensaje e ID
   async create(
-    @Body() createProductoDto: CreateProductoDto,
-  ): Promise<CreateProductoDto> {
-    return this.productosService.create(createProductoDto);
+    @Body() createProductDto: CreateProductDto,
+  ): Promise<{ message: string; id: string }> {
+    return this.productsService.create(createProductDto);
   }
 
   @Get('list')
@@ -48,7 +50,7 @@ export class ProductosController {
     description: 'No se encontraron productos.',
   })
   findAll() {
-    return this.productosService.findAll();
+    return this.productsService.findAll();
   }
 
   @Get(':id')
@@ -69,7 +71,7 @@ export class ProductosController {
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<ProductResponseDto | null> {
-    return this.productosService.findOne(id);
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')
@@ -89,13 +91,13 @@ export class ProductosController {
   })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateProductoDto: UpdateProductoDto,
+    @Body() updateProductDto: UpdateProductDto,
   ) {
-    const productoActualizado = await this.productosService.update(
+    const productUpdated = await this.productsService.update(
       id,
-      updateProductoDto,
+      updateProductDto,
     );
-    return productoActualizado;
+    return productUpdated;
   }
 
   @Delete(':id')
@@ -113,6 +115,6 @@ export class ProductosController {
     description: 'Producto a eliminar no encontrado.',
   })
   remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.productosService.remove(id);
+    return this.productsService.remove(id);
   }
 }

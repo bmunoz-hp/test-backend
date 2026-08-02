@@ -1,8 +1,13 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateProductoDto } from './create-producto.dto';
-import { IsInt, IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsNotEmpty,
+  Min,
+  IsInt,
+} from 'class-validator';
 
-export class UpdateProductoDto extends PartialType(CreateProductoDto) {
+export class CreateProductDto {
   @IsString()
   @IsNotEmpty({ message: 'El nombre del producto es obligatorio' })
   nombre!: string;

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProductosService } from './productos.service';
+import { ProductosService } from './products.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Producto } from './entities/producto.entity';
+import { Producto } from './entities/product.entity';
 import { NotFoundException } from '@nestjs/common';
 
 describe('ProductosService', () => {

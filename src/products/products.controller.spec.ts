@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProductosController } from './productos.controller';
-import { ProductosService } from './productos.service';
+import { ProductosController } from './products.controller';
+import { ProductosService } from './products.service';
 
 describe('ProductosController', () => {
   let controller: ProductosController;
@@ -9,9 +9,11 @@ describe('ProductosController', () => {
     create: jest.fn().mockImplementation((dto) => {
       return Promise.resolve({ id: 'uuid-1234', ...dto });
     }),
-    findAll: jest.fn().mockResolvedValue([
-      { id: 'uuid-1234', nombre: 'Test', precio: 10, stock: 5 },
-    ]),
+    findAll: jest
+      .fn()
+      .mockResolvedValue([
+        { id: 'uuid-1234', nombre: 'Test', precio: 10, stock: 5 },
+      ]),
     findOne: jest.fn().mockImplementation((id) => {
       return Promise.resolve({ id, nombre: 'Test', precio: 10, stock: 5 });
     }),
