@@ -89,6 +89,10 @@ export class ProductsController {
     status: 404,
     description: 'Producto a actualizar no encontrado.',
   })
+  @ApiResponse({
+    status: 500,
+    description: 'Error interno del servidor al actualizar el producto.',
+  })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProductDto: UpdateProductDto,

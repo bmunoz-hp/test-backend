@@ -45,7 +45,9 @@ export class ProductsService {
   }
 
   async findAll(page = 1, limit = 10, search?: string) {
-    const query = this.productRepository.createQueryBuilder('product');
+    const query = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category'); // Se hace un left join con la tabla categories para obtener la categoría asociada al producto
 
     // Si se proporciona un término de búsqueda, se filtra por nombre del producto
     if (search) {
@@ -58,7 +60,7 @@ export class ProductsService {
     const [products, total] = await query
       .skip((page - 1) * limit)
       .take(limit)
-      .orderBy('product.nombre', 'ASC')
+      .orderBy('product.name', 'ASC')
       .getManyAndCount();
 
     // Se devuelve un objeto con los productos, el total de productos, la página actual y la última página
@@ -73,6 +75,7 @@ export class ProductsService {
   async findOne(id: string): Promise<Product> {
     const product = await this.productRepository
       .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category') // Se hace un left join con la tabla categories para obtener la categoría asociada al producto
       .where('product.id = :id', { id })
       .getOne();
 
@@ -87,7 +90,7 @@ export class ProductsService {
       .createQueryBuilder('product')
       .update(Product)
       .set(updateproductDto)
-      .where('product.id = :id', { id })
+      .where('id = :id', { id })
       .execute();
 
     // Se valida con el affected si se actualizo el producto, si no se actualizo se lanza una excepcion

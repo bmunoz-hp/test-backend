@@ -1,15 +1,15 @@
 {
   "info": {
-    "name": "Productos API (NestJS)",
-    "description": "Colección completa para probar el CRUD de Productos sincronizada con las rutas y decoradores Swagger del controlador.",
+    "name": "Prueba Técnica - Backend API (Productos y Categorías)",
+    "description": "Colección completa para probar las APIs de Productos y Categorías en NestJS sincronizada con la nomenclatura de campos (name, price, stock, categoryId).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Productos",
+      "name": "Categorías",
       "item": [
         {
-          "name": "Crear Producto",
+          "name": "1. Crear Categoría",
           "request": {
             "method": "POST",
             "header": [
@@ -20,44 +20,44 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Teclado Mecánico RGB\",\n  \"precio\": 129.99,\n  \"stock\": 50\n}"
+              "raw": "{\n  \"nombre\": \"Electrónica\",\n  \"descripcion\": \"Dispositivos y accesorios tecnológicos\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/productos/create",
+              "raw": "{{baseUrl}}/categories",
               "host": ["{{baseUrl}}"],
-              "path": ["productos", "create"]
+              "path": ["categories"]
             },
-            "description": "Crea un nuevo producto en la base de datos (201 Created)."
+            "description": "Crea una nueva categoría en el sistema. Devuelve 201 en éxito."
           }
         },
         {
-          "name": "Obtener Todos los Productos",
+          "name": "2. Obtener Todas las Categorías",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/productos/list",
+              "raw": "{{baseUrl}}/categories",
               "host": ["{{baseUrl}}"],
-              "path": ["productos", "list"]
+              "path": ["categories"]
             },
-            "description": "Devuelve la lista completa de productos registrados (200 OK)."
+            "description": "Obtiene la lista completa de categorías registradas."
           }
         },
         {
-          "name": "Obtener Producto por ID",
+          "name": "3. Obtener Categoría por ID",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/productos/{{producto_id}}",
+              "raw": "{{baseUrl}}/categories/{{category_id}}",
               "host": ["{{baseUrl}}"],
-              "path": ["productos", "{{producto_id}}"]
+              "path": ["categories", "{{category_id}}"]
             },
-            "description": "Busca un producto por su UUID en la base de datos (200 OK / 400 BadRequest / 404 NotFound)."
+            "description": "Busca una categoría específica por su UUID."
           }
         },
         {
-          "name": "Actualizar Producto",
+          "name": "4. Actualizar Categoría por ID",
           "request": {
             "method": "PATCH",
             "header": [
@@ -68,18 +68,123 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"precio\": 99.99,\n  \"stock\": 45\n}"
+              "raw": "{\n  \"descripcion\": \"Dispositivos, accesorios y componentes tecnológicos\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{category_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{category_id}}"]
+            },
+            "description": "Actualiza parcialmente el nombre o la descripción de una categoría."
+          }
+        },
+        {
+          "name": "5. Eliminar Categoría por ID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{category_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{category_id}}"]
+            },
+            "description": "Elimina una categoría del sistema por su UUID."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "1. Crear Producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Teclado Mecánico RGB\",\n  \"price\": 129.99,\n  \"stock\": 50,\n  \"categoryId\": \"{{category_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productos/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "create"]
+            },
+            "description": "Crea un nuevo producto vinculado a una categoría mediante `categoryId`. Utiliza la nomenclatura name, price, stock."
+          }
+        },
+        {
+          "name": "2. Obtener Productos Paginados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/productos/list?page=1&limit=10&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "list"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número de página (por defecto: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Registros por página (por defecto: 10)"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Término de búsqueda opcional por nombre"
+                }
+              ]
+            },
+            "description": "Devuelve la lista paginada de productos incluyendo su categoría asociada."
+          }
+        },
+        {
+          "name": "3. Obtener Producto por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/productos/{{producto_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "{{producto_id}}"]
+            },
+            "description": "Busca un producto por su UUID devuelto junto con su categoría."
+          }
+        },
+        {
+          "name": "4. Actualizar Producto por ID",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 99.99,\n  \"stock\": 45,\n  \"categoryId\": \"{{category_id}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/productos/{{producto_id}}",
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
             },
-            "description": "Actualiza parcialmente un producto existente por su UUID."
+            "description": "Actualiza parcialmente un producto existente o le asigna/cambia la categoría."
           }
         },
         {
-          "name": "Eliminar Producto",
+          "name": "5. Eliminar Producto por ID",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -88,7 +193,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["productos", "{{producto_id}}"]
             },
-            "description": "Elimina un producto por su UUID (200 OK / 400 BadRequest / 404 NotFound)."
+            "description": "Elimina un producto por su UUID."
           }
         }
       ]
@@ -103,6 +208,11 @@
     {
       "key": "producto_id",
       "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "category_id",
+      "value": "a48b5678-e89b-12d3-a456-426614174000",
       "type": "string"
     }
   ]

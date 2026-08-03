@@ -7,8 +7,8 @@ export class ProductResponseDto {
   id!: string;
 
   @ApiProperty({ example: 'Laptop Pro' })
-  nombre!: string;
+  name!: string;
 
   @ApiProperty({ example: 1200.5 })
-  precio!: number;
+  price!: number;
 }
