@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Prueba Técnica - Backend API (Productos y Categorías)",
-    "description": "Colección completa para probar las APIs de Productos y Categorías en NestJS sincronizada con la nomenclatura de campos (name, price, stock, categoryId).",
+    "name": "Prueba Técnica - Backend API (Productos, Categorías y Ventas)",
+    "description": "Colección completa para probar las APIs de Productos, Categorías y Ventas en NestJS con variables de entorno local y ejemplos reales de peticiones.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -115,7 +115,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["productos", "create"]
             },
-            "description": "Crea un nuevo producto vinculado a una categoría mediante `categoryId`. Utiliza la nomenclatura name, price, stock."
+            "description": "Crea un nuevo producto vinculado a una categoría mediante `categoryId`."
           }
         },
         {
@@ -131,17 +131,17 @@
                 {
                   "key": "page",
                   "value": "1",
-                  "description": "Número de página (por defecto: 1)"
+                  "description": "Número de página"
                 },
                 {
                   "key": "limit",
                   "value": "10",
-                  "description": "Registros por página (por defecto: 10)"
+                  "description": "Registros por página"
                 },
                 {
                   "key": "search",
                   "value": "",
-                  "description": "Término de búsqueda opcional por nombre"
+                  "description": "Filtro de búsqueda opcional"
                 }
               ]
             },
@@ -197,6 +197,71 @@
           }
         }
       ]
+    },
+    {
+      "name": "Ventas",
+      "item": [
+        {
+          "name": "1. Registrar Venta y Descontar Stock",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"{{producto_id}}\",\n      \"quantity\": 2\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sales/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["sales", "create"]
+            },
+            "description": "Registra una transacción de venta descontando el stock del producto de forma atómica."
+          }
+        },
+        {
+          "name": "2. Obtener Ventas Paginadas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sales/list?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["sales", "list"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número de página"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Registros por página"
+                }
+              ]
+            },
+            "description": "Obtiene la lista paginada de ventas junto con sus detalles e información de producto."
+          }
+        },
+        {
+          "name": "3. Obtener Venta por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sales/{{sale_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["sales", "{{sale_id}}"]
+            },
+            "description": "Busca los detalles de una venta específica por su UUID."
+          }
+        }
+      ]
     }
   ],
   "variable": [
@@ -213,6 +278,11 @@
     {
       "key": "category_id",
       "value": "a48b5678-e89b-12d3-a456-426614174000",
+      "type": "string"
+    },
+    {
+      "key": "sale_id",
+      "value": "998b5678-e89b-12d3-a456-426614174000",
       "type": "string"
     }
   ]

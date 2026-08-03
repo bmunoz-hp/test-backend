@@ -22,6 +22,7 @@ export class CategoriesService {
       .values(createCategoryDto)
       .execute();
 
+    /** Obtiene el ID generado por la base de datos para este nuevo registro */
     const generatedId = category.identifiers[0].id;
 
     return {

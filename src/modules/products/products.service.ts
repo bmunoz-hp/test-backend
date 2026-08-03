@@ -30,6 +30,7 @@ export class ProductsService {
         .values(createproductDto)
         .execute();
 
+      /** Obtiene el ID generado por la base de datos para este nuevo registro */
       const generatedId = query.identifiers[0].id;
 
       return {
