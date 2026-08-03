@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateSaleDto } from './dto/create-sale.dto';
+import { UpdateSaleDto } from './dto/update-sale.dto';
 import { Sale } from './entities/sale.entity';
 import { SaleDetail } from './entities/sale-detail.entity';
 import { Product } from '../products/entities/product.entity';
@@ -164,5 +165,28 @@ export class SalesService {
     }
 
     return sale;
+  }
+
+  /**
+   * Actualizar el estado de una venta mediante QueryBuilder
+   */
+  async updateStatus(id: string, updateSaleDto: UpdateSaleDto) {
+    // Validar primero si la venta existe
+    await this.findOne(id);
+
+    const query = await this.saleRepository
+      .createQueryBuilder('sale')
+      .update(Sale)
+      .set({ status: updateSaleDto.status })
+      .where('id = :id', { id: id.trim() })
+      .execute();
+
+    if (query.affected === 0) {
+      throw new NotFoundException(`Venta con ID ${id} no encontrada`);
+    }
+
+    return {
+      message: `El estado de la venta con ID ${id} se actualizó correctamente a '${updateSaleDto.status}'`,
+    };
   }
 }

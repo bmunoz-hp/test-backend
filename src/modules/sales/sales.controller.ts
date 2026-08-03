@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
   Param,
   Query,
@@ -10,6 +11,7 @@ import {
 import { ApiOperation, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { SalesService } from './sales.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
+import { UpdateSaleDto } from './dto/update-sale.dto';
 
 @ApiTags('Ventas')
 @Controller('sales')
@@ -65,5 +67,26 @@ export class SalesController {
   })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.salesService.findOne(id);
+  }
+
+  @Patch(':id/status')
+  @ApiOperation({ summary: 'Cambiar el estado de una venta' })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado de la venta actualizado correctamente.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'ID de venta inválido o estado no permitido.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Venta no encontrada.',
+  })
+  async updateStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateSaleDto: UpdateSaleDto,
+  ) {
+    return this.salesService.updateStatus(id, updateSaleDto);
   }
 }

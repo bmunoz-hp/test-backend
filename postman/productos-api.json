@@ -260,6 +260,28 @@
             },
             "description": "Busca los detalles de una venta específica por su UUID."
           }
+        },
+        {
+          "name": "4. Cambiar Estado de una Venta",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sales/{{sale_id}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["sales", "{{sale_id}}", "status"]
+            },
+            "description": "Actualiza el estado de una venta (COMPLETED, PENDING, CANCELED)."
+          }
         }
       ]
     }
