@@ -7,6 +7,11 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { RoleEnum } from '../users/entities/role.entity';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-producto.dto';
 import { UpdateProductDto } from './dto/update-producto.dto';
@@ -15,11 +20,13 @@ import { ParseUUIDPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Productos')
-@Controller('productos')
+@Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post('create')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(RoleEnum.ADMIN)
   @ApiOperation({ summary: 'Crear un nuevo producto' })
   @ApiResponse({
     status: 201,
@@ -39,6 +46,8 @@ export class ProductsController {
   }
 
   @Get('list')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.SELLER, RoleEnum.USER)
   @ApiOperation({ summary: 'Obtener todos los productos' })
   @ApiResponse({
     status: 200,
@@ -50,10 +59,13 @@ export class ProductsController {
     description: 'No se encontraron productos.',
   })
   findAll() {
+    (RoleEnum.SELLER, RoleEnum.USER);
     return this.productsService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.SELLER, RoleEnum.USER)
   @ApiOperation({ summary: 'Obtener un producto por su ID' })
   @ApiResponse({
     status: 200,
@@ -75,6 +87,8 @@ export class ProductsController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(RoleEnum.ADMIN)
   @ApiOperation({ summary: 'Actualizar un producto por ID' })
   @ApiResponse({
     status: 200,
@@ -105,6 +119,8 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(RoleEnum.ADMIN)
   @ApiOperation({ summary: 'Eliminar un producto por ID' })
   @ApiResponse({
     status: 200,

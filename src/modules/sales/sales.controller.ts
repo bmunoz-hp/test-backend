@@ -7,7 +7,12 @@ import {
   Param,
   Query,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RoleEnum } from '../users/entities/role.entity';
 import { ApiOperation, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { SalesService } from './sales.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
@@ -15,10 +20,15 @@ import { UpdateSaleDto } from './dto/update-sale.dto';
 
 @ApiTags('Ventas')
 @Controller('sales')
+// @UseGuards(AuthGuard('jwt'), RolesGuard) //Se aplica jwt + roles a todo el controlador
+// @Roles(RoleEnum.ADMIN, RoleEnum.SELLER) //Solo ADMIN y SELLER pueden usar el modulo
 export class SalesController {
+  /**Todos los metodos dentro del controlador quedan protegidos */
   constructor(private readonly salesService: SalesService) {}
 
   @Post('create')
+  @UseGuards(AuthGuard('jwt'), RolesGuard) // <-- Protege sólo este endpoint
+  @Roles(RoleEnum.ADMIN, RoleEnum.SELLER)
   @ApiOperation({ summary: 'Registrar una nueva venta y descontar stock' })
   @ApiResponse({
     status: 201,
@@ -37,6 +47,8 @@ export class SalesController {
   }
 
   @Get('list')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.SELLER, RoleEnum.USER)
   @ApiOperation({ summary: 'Obtener todas las ventas paginadas' })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
@@ -44,14 +56,13 @@ export class SalesController {
     status: 200,
     description: 'Lista paginada de ventas obtenida correctamente.',
   })
-  async findAll(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ) {
+  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
     return this.salesService.findAll(+page, +limit);
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.SELLER, RoleEnum.USER)
   @ApiOperation({ summary: 'Obtener una venta por ID' })
   @ApiResponse({
     status: 200,
@@ -70,6 +81,8 @@ export class SalesController {
   }
 
   @Patch(':id/status')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(RoleEnum.ADMIN)
   @ApiOperation({ summary: 'Cambiar el estado de una venta' })
   @ApiResponse({
     status: 200,
