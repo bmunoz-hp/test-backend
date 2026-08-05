@@ -1,125 +1,241 @@
 {
   "info": {
-    "name": "Prueba Técnica - Backend API (Productos, Categorías y Ventas)",
-    "description": "Colección completa para probar las APIs de Productos, Categorías y Ventas en NestJS con variables de entorno local y ejemplos reales de peticiones.",
+    "name": "Prueba Técnica - Backend API Completa (CRUD Completo)",
+    "description": "Colección completa con los endpoints CRUD (Create, Read, Update, Delete) para Auth, Users, Suppliers, Products, Categories y Sales, incluyendo Bearer Token JWT.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Categorías",
+      "name": "Autenticación",
       "item": [
         {
-          "name": "1. Crear Categoría",
+          "name": "1. Registro de Usuario (Signup)",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Electrónica\",\n  \"descripcion\": \"Dispositivos y accesorios tecnológicos\"\n}"
+              "raw": "{\n  \"fullName\": \"Juan Pérez\",\n  \"email\": \"juan@correo.com\",\n  \"password\": \"123456\"\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/categories",
-              "host": ["{{baseUrl}}"],
-              "path": ["categories"]
-            },
-            "description": "Crea una nueva categoría en el sistema. Devuelve 201 en éxito."
+            "url": { "raw": "{{baseUrl}}/auth/signup", "host": ["{{baseUrl}}"], "path": ["auth", "signup"] }
           }
         },
         {
-          "name": "2. Obtener Todas las Categorías",
+          "name": "2. Iniciar Sesión (Login)",
           "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories",
-              "host": ["{{baseUrl}}"],
-              "path": ["categories"]
-            },
-            "description": "Obtiene la lista completa de categorías registradas."
-          }
-        },
-        {
-          "name": "3. Obtener Categoría por ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories/{{category_id}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["categories", "{{category_id}}"]
-            },
-            "description": "Busca una categoría específica por su UUID."
-          }
-        },
-        {
-          "name": "4. Actualizar Categoría por ID",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"descripcion\": \"Dispositivos, accesorios y componentes tecnológicos\"\n}"
+              "raw": "{\n  \"email\": \"juan@correo.com\",\n  \"password\": \"123456\"\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/categories/{{category_id}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["categories", "{{category_id}}"]
-            },
-            "description": "Actualiza parcialmente el nombre o la descripción de una categoría."
-          }
-        },
-        {
-          "name": "5. Eliminar Categoría por ID",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories/{{category_id}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["categories", "{{category_id}}"]
-            },
-            "description": "Elimina una categoría del sistema por su UUID."
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
           }
         }
       ]
     },
     {
-      "name": "Productos",
+      "name": "Usuarios (CRUD)",
       "item": [
         {
-          "name": "1. Crear Producto",
+          "name": "1. Crear Usuario (POST)",
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Carlos Administrador\",\n  \"email\": \"admin@correo.com\",\n  \"password\": \"123456\",\n  \"roleId\": \"{{role_id}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/create", "host": ["{{baseUrl}}"], "path": ["users", "create"] }
+          }
+        },
+        {
+          "name": "2. Listar Usuarios Paginados (GET)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/users/list?page=1&limit=10&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "list"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }, { "key": "search", "value": "" }]
+            }
+          }
+        },
+        {
+          "name": "3. Obtener Usuario por ID (GET)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "{{baseUrl}}/users/{{user_id}}", "host": ["{{baseUrl}}"], "path": ["users", "{{user_id}}"] }
+          }
+        },
+        {
+          "name": "4. Actualizar Usuario (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Carlos Pérez Actualizado\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/{{user_id}}", "host": ["{{baseUrl}}"], "path": ["users", "{{user_id}}"] }
+          }
+        },
+        {
+          "name": "5. Eliminar Usuario (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "{{baseUrl}}/users/{{user_id}}", "host": ["{{baseUrl}}"], "path": ["users", "{{user_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Proveedores - Suppliers (CRUD)",
+      "item": [
+        {
+          "name": "1. Crear Proveedor (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Distribuidora Tech S.A.\",\n  \"email\": \"contacto@distribuidoratech.com\",\n  \"phone\": \"+573001234567\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/suppliers/create", "host": ["{{baseUrl}}"], "path": ["suppliers", "create"] }
+          }
+        },
+        {
+          "name": "2. Listar Todos los Proveedores (GET)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "{{baseUrl}}/suppliers/list", "host": ["{{baseUrl}}"], "path": ["suppliers", "list"] }
+          }
+        },
+        {
+          "name": "3. Obtener Proveedor por ID (GET)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "{{baseUrl}}/suppliers/{{supplier_id}}", "host": ["{{baseUrl}}"], "path": ["suppliers", "{{supplier_id}}"] }
+          }
+        },
+        {
+          "name": "4. Actualizar Proveedor (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Distribuidora Tech Global S.A.S.\",\n  \"phone\": \"+573119998877\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/suppliers/{{supplier_id}}", "host": ["{{baseUrl}}"], "path": ["suppliers", "{{supplier_id}}"] }
+          }
+        },
+        {
+          "name": "5. Eliminar Proveedor (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "{{baseUrl}}/suppliers/{{supplier_id}}", "host": ["{{baseUrl}}"], "path": ["suppliers", "{{supplier_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categorías (CRUD)",
+      "item": [
+        {
+          "name": "1. Crear Categoría (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Electrónica\",\n  \"descripcion\": \"Dispositivos y accesorios tecnológicos\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/categories", "host": ["{{baseUrl}}"], "path": ["categories"] }
+          }
+        },
+        {
+          "name": "2. Listar Categorías (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/categories", "host": ["{{baseUrl}}"], "path": ["categories"] }
+          }
+        },
+        {
+          "name": "3. Obtener Categoría por ID (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/categories/{{category_id}}", "host": ["{{baseUrl}}"], "path": ["categories", "{{category_id}}"] }
+          }
+        },
+        {
+          "name": "4. Actualizar Categoría (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Electrónica y Cómputo\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/categories/{{category_id}}", "host": ["{{baseUrl}}"], "path": ["categories", "{{category_id}}"] }
+          }
+        },
+        {
+          "name": "5. Eliminar Categoría (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "{{baseUrl}}/categories/{{category_id}}", "host": ["{{baseUrl}}"], "path": ["categories", "{{category_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Productos (CRUD)",
+      "item": [
+        {
+          "name": "1. Crear Producto (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Teclado Mecánico RGB\",\n  \"price\": 129.99,\n  \"stock\": 50,\n  \"categoryId\": \"{{category_id}}\"\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/productos/create",
-              "host": ["{{baseUrl}}"],
-              "path": ["productos", "create"]
-            },
-            "description": "Crea un nuevo producto vinculado a una categoría mediante `categoryId`."
+            "url": { "raw": "{{baseUrl}}/productos/create", "host": ["{{baseUrl}}"], "path": ["productos", "create"] }
           }
         },
         {
-          "name": "2. Obtener Productos Paginados",
+          "name": "2. Listar Productos Paginados (GET)",
           "request": {
             "method": "GET",
             "header": [],
@@ -127,185 +243,108 @@
               "raw": "{{baseUrl}}/productos/list?page=1&limit=10&search=",
               "host": ["{{baseUrl}}"],
               "path": ["productos", "list"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Número de página"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Registros por página"
-                },
-                {
-                  "key": "search",
-                  "value": "",
-                  "description": "Filtro de búsqueda opcional"
-                }
-              ]
-            },
-            "description": "Devuelve la lista paginada de productos incluyendo su categoría asociada."
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }, { "key": "search", "value": "" }]
+            }
           }
         },
         {
-          "name": "3. Obtener Producto por ID",
+          "name": "3. Obtener Producto por ID (GET)",
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/productos/{{producto_id}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["productos", "{{producto_id}}"]
-            },
-            "description": "Busca un producto por su UUID devuelto junto con su categoría."
+            "url": { "raw": "{{baseUrl}}/productos/{{producto_id}}", "host": ["{{baseUrl}}"], "path": ["productos", "{{producto_id}}"] }
           }
         },
         {
-          "name": "4. Actualizar Producto por ID",
+          "name": "4. Actualizar Producto (PATCH)",
           "request": {
             "method": "PATCH",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"price\": 99.99,\n  \"stock\": 45,\n  \"categoryId\": \"{{category_id}}\"\n}"
+              "raw": "{\n  \"price\": 119.99,\n  \"stock\": 60\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/productos/{{producto_id}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["productos", "{{producto_id}}"]
-            },
-            "description": "Actualiza parcialmente un producto existente o le asigna/cambia la categoría."
+            "url": { "raw": "{{baseUrl}}/productos/{{producto_id}}", "host": ["{{baseUrl}}"], "path": ["productos", "{{producto_id}}"] }
           }
         },
         {
-          "name": "5. Eliminar Producto por ID",
+          "name": "5. Eliminar Producto (DELETE)",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/productos/{{producto_id}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["productos", "{{producto_id}}"]
-            },
-            "description": "Elimina un producto por su UUID."
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "{{baseUrl}}/productos/{{producto_id}}", "host": ["{{baseUrl}}"], "path": ["productos", "{{producto_id}}"] }
           }
         }
       ]
     },
     {
-      "name": "Ventas",
+      "name": "Ventas (CRUD y Operaciones)",
       "item": [
         {
-          "name": "1. Registrar Venta y Descontar Stock",
+          "name": "1. Registrar Venta y Descontar Stock (POST)",
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"{{producto_id}}\",\n      \"quantity\": 2\n    }\n  ]\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/sales/create",
-              "host": ["{{baseUrl}}"],
-              "path": ["sales", "create"]
-            },
-            "description": "Registra una transacción de venta descontando el stock del producto de forma atómica."
+            "url": { "raw": "{{baseUrl}}/sales/create", "host": ["{{baseUrl}}"], "path": ["sales", "create"] }
           }
         },
         {
-          "name": "2. Obtener Ventas Paginadas",
+          "name": "2. Listar Ventas Paginadas (GET)",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
             "url": {
               "raw": "{{baseUrl}}/sales/list?page=1&limit=10",
               "host": ["{{baseUrl}}"],
               "path": ["sales", "list"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Número de página"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Registros por página"
-                }
-              ]
-            },
-            "description": "Obtiene la lista paginada de ventas junto con sus detalles e información de producto."
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }]
+            }
           }
         },
         {
-          "name": "3. Obtener Venta por ID",
+          "name": "3. Obtener Venta por ID (GET)",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/sales/{{sale_id}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["sales", "{{sale_id}}"]
-            },
-            "description": "Busca los detalles de una venta específica por su UUID."
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "{{baseUrl}}/sales/{{sale_id}}", "host": ["{{baseUrl}}"], "path": ["sales", "{{sale_id}}"] }
           }
         },
         {
-          "name": "4. Cambiar Estado de una Venta",
+          "name": "4. Cambiar Estado de una Venta (PATCH)",
           "request": {
             "method": "PATCH",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"COMPLETED\"\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/sales/{{sale_id}}/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["sales", "{{sale_id}}", "status"]
-            },
-            "description": "Actualiza el estado de una venta (COMPLETED, PENDING, CANCELED)."
+            "url": { "raw": "{{baseUrl}}/sales/{{sale_id}}/status", "host": ["{{baseUrl}}"], "path": ["sales", "{{sale_id}}", "status"] }
           }
         }
       ]
     }
   ],
   "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:3000",
-      "type": "string"
-    },
-    {
-      "key": "producto_id",
-      "value": "123e4567-e89b-12d3-a456-426614174000",
-      "type": "string"
-    },
-    {
-      "key": "category_id",
-      "value": "a48b5678-e89b-12d3-a456-426614174000",
-      "type": "string"
-    },
-    {
-      "key": "sale_id",
-      "value": "998b5678-e89b-12d3-a456-426614174000",
-      "type": "string"
-    }
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
+    { "key": "jwt_token", "value": "pega_aqui_el_token_jwt_del_login", "type": "string" },
+    { "key": "producto_id", "value": "123e4567-e89b-12d3-a456-426614174000", "type": "string" },
+    { "key": "category_id", "value": "a48b5678-e89b-12d3-a456-426614174000", "type": "string" },
+    { "key": "sale_id", "value": "998b5678-e89b-12d3-a456-426614174000", "type": "string" },
+    { "key": "user_id", "value": "888b5678-e89b-12d3-a456-426614174000", "type": "string" },
+    { "key": "supplier_id", "value": "777b5678-e89b-12d3-a456-426614174000", "type": "string" },
+    { "key": "role_id", "value": "666b5678-e89b-12d3-a456-426614174000", "type": "string" }
   ]
 }

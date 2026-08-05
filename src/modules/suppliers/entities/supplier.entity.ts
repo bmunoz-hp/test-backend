@@ -20,7 +20,7 @@ export class Supplier {
   //   Relacion proxima con la tabla de tipos de documentos.
   @ManyToMany(() => DocumentType)
   @JoinColumn({ name: 'doc_type_id' })
-  docType!: DocumentType;
+  docType!: string;
 
   @Column({ type: 'varchar', length: 10, unique: true, nullable: false })
   numDoc!: string;
