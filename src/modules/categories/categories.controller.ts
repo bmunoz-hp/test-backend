@@ -7,13 +7,14 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RoleEnum } from '../users/entities/role.entity';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -41,12 +42,14 @@ export class CategoriesController {
 
   @Get()
   @ApiOperation({ summary: 'Obtener todas las categorías' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
   @ApiResponse({
     status: 200,
     description: 'Lista de categorías obtenida correctamente.',
   })
-  findAll() {
-    return this.categoriesService.findAll();
+  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.categoriesService.findAll(+page, +limit);
   }
 
   @Get(':id')

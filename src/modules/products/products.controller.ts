@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -17,14 +18,14 @@ import { CreateProductDto } from './dto/create-producto.dto';
 import { UpdateProductDto } from './dto/update-producto.dto';
 import { ProductResponseDto } from './dto/product-response.dto';
 import { ParseUUIDPipe } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Productos')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post('create')
+  @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(RoleEnum.ADMIN)
   @ApiOperation({ summary: 'Crear un nuevo producto' })
@@ -45,10 +46,12 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-  @Get('list')
+  @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(RoleEnum.ADMIN, RoleEnum.SELLER, RoleEnum.USER)
-  @ApiOperation({ summary: 'Obtener todos los productos' })
+  @ApiOperation({ summary: 'Obtener todos los productos paginados' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
   @ApiResponse({
     status: 200,
     description: 'Productos obtenidos correctamente.',
@@ -58,9 +61,9 @@ export class ProductsController {
     status: 404,
     description: 'No se encontraron productos.',
   })
-  findAll() {
+  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
     (RoleEnum.SELLER, RoleEnum.USER);
-    return this.productsService.findAll();
+    return this.productsService.findAll(+page, +limit);
   }
 
   @Get(':id')

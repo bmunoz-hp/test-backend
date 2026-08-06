@@ -26,7 +26,7 @@ export class SalesController {
   /**Todos los metodos dentro del controlador quedan protegidos */
   constructor(private readonly salesService: SalesService) {}
 
-  @Post('create')
+  @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard) // <-- Protege sólo este endpoint
   @Roles(RoleEnum.ADMIN, RoleEnum.SELLER)
   @ApiOperation({ summary: 'Registrar una nueva venta y descontar stock' })
@@ -46,7 +46,7 @@ export class SalesController {
     return this.salesService.create(createSaleDto);
   }
 
-  @Get('list')
+  @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(RoleEnum.ADMIN, RoleEnum.SELLER, RoleEnum.USER)
   @ApiOperation({ summary: 'Obtener todas las ventas paginadas' })

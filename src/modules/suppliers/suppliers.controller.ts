@@ -8,11 +8,12 @@ import {
   Delete,
   UseGuards,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { RoleEnum } from '../users/entities/role.entity';
@@ -26,7 +27,7 @@ import { SupplierResponseDto } from './dto/supplier-response.dto';
 export class SuppliersController {
   constructor(private readonly suppliersService: SuppliersService) {}
 
-  @Post('create')
+  @Post()
   @ApiOperation({ summary: 'Crear un nuevo proveedor' })
   @ApiResponse({
     status: 201,
@@ -49,8 +50,10 @@ export class SuppliersController {
     return this.suppliersService.create(createSupplierDto);
   }
 
-  @Get('list')
-  @ApiOperation({ summary: 'Obtener todos los proveedores' })
+  @Get()
+  @ApiOperation({ summary: 'Obtener todos los proveedores paginados' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
   @ApiResponse({
     status: 200,
     description: 'Proveedores obtenidos correctamente',
@@ -60,8 +63,8 @@ export class SuppliersController {
     status: 404,
     description: 'No se encontraron proveedores',
   })
-  findAll() {
-    return this.suppliersService.findAll();
+  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.suppliersService.findAll(+page, +limit);
   }
 
   @Get(':id')

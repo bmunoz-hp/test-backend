@@ -8,11 +8,12 @@ import {
   Delete,
   UseGuards,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { RoleEnum } from './entities/role.entity';
@@ -26,7 +27,7 @@ import { UserResposeDto } from './dto/user-response.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('create')
+  @Post()
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
   @ApiResponse({
     status: 201,
@@ -49,8 +50,10 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get('list')
-  @ApiOperation({ summary: 'Obtener todos los usuarios.' })
+  @Get()
+  @ApiOperation({ summary: 'Obtener todos los usuarios paginados.' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
   @ApiResponse({
     status: 200,
     description: 'Usuarios obtenidos correctamente',
@@ -63,8 +66,8 @@ export class UsersController {
     status: 404,
     description: 'No se encontraron usuarios',
   })
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.usersService.findAll(+page, +limit);
   }
 
   @Get(':id')
@@ -85,7 +88,7 @@ export class UsersController {
     status: 404,
     description: 'No se encontró el usuario',
   })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.findOne(id);
   }
 
@@ -142,7 +145,7 @@ export class UsersController {
     status: 500,
     description: 'Error interno del servidor al actualizar el prroveedor.',
   })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }
 }
